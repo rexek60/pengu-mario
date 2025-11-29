@@ -2,34 +2,36 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Pengu Adventure Ultimate+</title>
+<title>Pengu Adventure MEGA Edition</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="menu">
-    <h1>Pengu Adventure Ultimate+</h1>
+    <h1>Pengu Adventure MEGA Edition</h1>
     <button onclick="startGame()">Oyuna Başla (0.35 USDT)</button>
     <button onclick="openShop()">Skin Mağazası</button>
+    <button onclick="openLeaderboard()">Liderlik Tablosu</button>
 </div>
 
 <div id="shop" class="hidden">
-    <h2>Skin Satın Al</h2>
-    <p>Bakiyen: <span id='coins'>0</span> PenguCoin</p>
-    <button onclick="buySkin('red')">Kırmızı Pengu - 2 Coin</button>
-    <button onclick="buySkin('black')">Siyah Pengu - 3 Coin</button>
-    <button onclick="closeShop()">Geri</button>
+    <h2>Skin Mağazası</h2>
+    <p>Bakiyen: <span id="coins">0</span> PenguCoin</p>
+    <button onclick="buySkin('red')">Kırmızı Pengu — 2 Coin</button>
+    <button onclick="buySkin('black')">Siyah Pengu — 3 Coin</button>
+    <button onclick="backMenu()">Geri</button>
 </div>
 
-<!-- Mobile controls -->
-<div id="mobile-controls" class="hidden">
-    <button id="leftBtn">◀</button>
-    <button id="rightBtn">▶</button>
-    <button id="jumpBtn">⟰</button>
+<div id="leaderboard" class="hidden">
+    <h2>Liderlik Tablosu</h2>
+    <p>(Yerel Simülasyon)</p>
+    <ul id="scores"></ul>
+    <button onclick="backMenu()">Geri</button>
 </div>
 
-<canvas id="game" width="1000" height="550" class="hidden"></canvas>
+<canvas id="game" class="hidden" width="1100" height="600"></canvas>
 
 <script src="game.js"></script>
+
 </body>
 </html>
