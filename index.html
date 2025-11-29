@@ -2,17 +2,17 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Pengu Adventure MEGA INTEGRATED</title>
+<title>Pengu Adventure ULTRA Edition</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="menu">
-    <h1>Pengu Adventure MEGA INTEGRATED</h1>
-    <button onclick="startGame()">Oyuna Başla (0.35 USDT)</button>
+    <h1>Pengu Adventure ULTRA Edition</h1>
+    <button onclick="startGame()">Oyuna Başla</button>
     <button onclick="openShop()">Skin Mağazası</button>
     <button onclick="openLeaderboard()">Liderlik Tablosu</button>
-    <button onclick="connectWallet()">Cüzdan Bağla</button>
+    <button onclick="connectWallet()">Cüzdan Bağla (Simülasyon)</button>
 </div>
 
 <div id="shop" class="hidden">
@@ -25,12 +25,11 @@
 
 <div id="leaderboard" class="hidden">
     <h2>Liderlik Tablosu</h2>
-    <p>(Yerel Simülasyon)</p>
     <ul id="scores"></ul>
     <button onclick="backMenu()">Geri</button>
 </div>
 
-<canvas id="game" class="hidden" width="1100" height="600"></canvas>
+<canvas id="game" class="hidden" width="1200" height="650"></canvas>
 
 <script src="game.js"></script>
 
