@@ -2,13 +2,13 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Pengu Adventure Ultimate</title>
+<title>Pengu Adventure Ultimate+</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="menu">
-    <h1>Pengu Adventure Ultimate</h1>
+    <h1>Pengu Adventure Ultimate+</h1>
     <button onclick="startGame()">Oyuna Başla (0.35 USDT)</button>
     <button onclick="openShop()">Skin Mağazası</button>
 </div>
@@ -19,6 +19,13 @@
     <button onclick="buySkin('red')">Kırmızı Pengu - 2 Coin</button>
     <button onclick="buySkin('black')">Siyah Pengu - 3 Coin</button>
     <button onclick="closeShop()">Geri</button>
+</div>
+
+<!-- Mobile controls -->
+<div id="mobile-controls" class="hidden">
+    <button id="leftBtn">◀</button>
+    <button id="rightBtn">▶</button>
+    <button id="jumpBtn">⟰</button>
 </div>
 
 <canvas id="game" width="1000" height="550" class="hidden"></canvas>

@@ -1,12 +1,14 @@
 
-let gameStarted = false;
-let selectedSkin = "blue";
-let penguCoins = 0;
+let gameStarted=false;
+let selectedSkin="blue";
+let penguCoins=0;
 
 function startGame(){
     document.getElementById("menu").classList.add("hidden");
     document.getElementById("game").classList.remove("hidden");
-    gameStarted = true;
+    document.getElementById("mobile-controls").classList.remove("hidden");
+    gameStarted=true;
+    music.play();
 }
 
 function openShop(){
@@ -21,138 +23,132 @@ function closeShop(){
 
 function buySkin(color){
     let cost = color==="red"?2:3;
-    if(penguCoins >= cost){
+    if(penguCoins>=cost){
         penguCoins -= cost;
-        selectedSkin = color;
-        document.getElementById("coins").innerText = penguCoins;
-        alert(color+" skin satın alındı!");
-    } else alert("Yetersiz bakiye!");
+        selectedSkin=color;
+        document.getElementById("coins").innerText=penguCoins;
+        alert("Skin satın alındı!");
+    } else alert("Yetersiz coin!");
 }
 
-// Canvas
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
 
-let keys = {};
-document.addEventListener("keydown", e => keys[e.code] = true);
-document.addEventListener("keyup", e => keys[e.code] = false);
+let keys={};
+document.addEventListener("keydown",e=>keys[e.code]=true);
+document.addEventListener("keyup",e=>keys[e.code]=false);
 
-// Player
-const player = { x:50, y:300, w:40, h:40, vy:0, onGround:false };
+// touch controls
+document.getElementById("leftBtn").onmousedown=()=>keys["ArrowLeft"]=true;
+document.getElementById("leftBtn").onmouseup=()=>keys["ArrowLeft"]=false;
+document.getElementById("rightBtn").onmousedown=()=>keys["ArrowRight"]=true;
+document.getElementById("rightBtn").onmouseup=()=>keys["ArrowRight"]=false;
+document.getElementById("jumpBtn").onmousedown=()=>keys["Space"]=true;
+document.getElementById("jumpBtn").onmouseup=()=>keys["Space"]=false;
 
-// Long map
-let tiles = [];
-for(let i=0;i<50;i++){
-    tiles.push({x:i*200, y:500, w:200, h:50});
+const player={x:50,y:300,w:40,h:40,vy:0,onGround:false};
+
+// assets
+let imgPlayer=new Image(); imgPlayer.src="assets/player.png";
+let imgEnemy=new Image(); imgEnemy.src="assets/enemy.png";
+let imgBoss=new Image(); imgBoss.src="assets/boss.png";
+let imgPrincess=new Image(); imgPrincess.src="assets/princess.png";
+let imgTile=new Image(); imgTile.src="assets/tile.png";
+
+// sounds
+let jump=new Audio("assets/jump.wav");
+let hit=new Audio("assets/hit.wav");
+let music=new Audio("assets/music.mp3");
+music.loop=true;
+
+// map
+let tiles=[];
+for(let i=0;i<200;i++){
+    tiles.push({x:i*100, y:500, w:100, h:50});
 }
 
-tiles.push({x:400, y:420, w:150, h:20});
-tiles.push({x:800, y:350, w:150, h:20});
-tiles.push({x:1400, y:300, w:150, h:20});
-tiles.push({x:2000, y:260, w:150, h:20});
-
-// Enemies
-let enemies = [];
-for(let i=0;i<5;i++){
-    enemies.push({x:600 + i*400, y:460, w:40, h:40, dir:1});
+let enemies=[];
+for(let i=0;i<20;i++){
+    enemies.push({x:600+i*400, y:460, w:40, h:40, dir:1});
 }
 
-// Boss
-let boss = {x:8000, y:450, w:80, h:80, hp:5};
+let boss={x:18000,y:450,w:100,h:100,hp:10};
+let princess={x:18500,y:440,w:60,h:70,rescued:false};
 
-// Princess
-let princess = {x:8500, y:440, w:50, h:60, rescued:false};
+const gravity=0.5;
 
-const gravity = 0.5;
-
-function rectCollide(a,b){
-    return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y;
+function rect(a,b){
+    return a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a.h>b.y;
 }
 
 function update(){
     if(!gameStarted) return;
 
-    if(keys["ArrowRight"]) player.x += 5;
-    if(keys["ArrowLeft"]) player.x -= 5;
+    if(keys["ArrowRight"]) player.x+=5;
+    if(keys["ArrowLeft"]) player.x-=5;
 
     if(keys["Space"] && player.onGround){
-        player.vy = -12;
+        player.vy=-12;
         player.onGround=false;
+        jump.play();
     }
 
-    player.vy += gravity;
-    player.y += player.vy;
+    player.vy+=gravity;
+    player.y+=player.vy;
 
     player.onGround=false;
-
     tiles.forEach(t=>{
-        if(rectCollide(player,t)){
-            player.y = t.y - player.h;
-            player.vy = 0;
-            player.onGround = true;
+        if(rect(player,t)){
+            player.y=t.y-player.h;
+            player.vy=0;
+            player.onGround=true;
         }
     });
 
     enemies.forEach(e=>{
-        e.x += e.dir*2;
-        if(e.x < e.xStart-100 || e.x > e.xStart+100) e.dir *= -1;
-
-        if(rectCollide(player, e)){
+        e.x+=e.dir*2;
+        if(e.x%400===0) e.dir*=-1;
+        if(rect(player,e)){
+            hit.play();
             player.x=50; player.y=300;
         }
     });
 
-    if(rectCollide(player, boss)){
-        if(player.vy > 0){
+    if(rect(player,boss)){
+        if(player.vy>0){
             boss.hp--;
-            player.vy = -10;
+            player.vy=-10;
         } else {
-            player.x = 50; player.y=300;
+            hit.play();
+            player.x=50; player.y=300;
         }
     }
 
-    if(boss.hp <= 0 && rectCollide(player, princess)){
+    if(boss.hp<=0 && rect(player,princess)){
         if(!princess.rescued){
-            princess.rescued = true;
+            princess.rescued=true;
             penguCoins += 1;
-            alert("Kraliçe Polly kurtarıldı! 1 PenguCoin kazandın!");
-            document.getElementById("coins").innerText = penguCoins;
+            document.getElementById("coins").innerText=penguCoins;
+            alert("Kraliçe Polly kurtarıldı! 1 PenguCoin!");
         }
     }
 }
 
 function draw(){
     if(!gameStarted) return;
-
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Camera
-    let camX = player.x - 300;
+    let camX = player.x - 400;
     ctx.save();
     ctx.translate(-camX,0);
 
-    // Tiles
-    ctx.fillStyle="#6ab04c";
-    tiles.forEach(t=> ctx.fillRect(t.x, t.y, t.w, t.h));
+    tiles.forEach(t=> ctx.drawImage(imgTile,t.x,t.y,t.w,t.h));
+    enemies.forEach(e=> ctx.drawImage(imgEnemy,e.x,e.y,e.w,e.h));
+    ctx.drawImage(imgBoss,boss.x,boss.y,boss.w,boss.h);
+    if(!princess.rescued)
+        ctx.drawImage(imgPrincess,princess.x,princess.y,princess.w,princess.h);
 
-    // Player
-    ctx.fillStyle = selectedSkin==="red" ? "red" :
-                    selectedSkin==="black" ? "black" : "#0077ff";
-    ctx.fillRect(player.x, player.y, player.w, player.h);
-
-    // Enemies
-    ctx.fillStyle="green";
-    enemies.forEach(e=> ctx.fillRect(e.x, e.y, e.w, e.h));
-
-    // Boss
-    ctx.fillStyle="darkred";
-    ctx.fillRect(boss.x, boss.y, boss.w, boss.h);
-
-    // Princess
-    if(!princess.rescued){
-        ctx.fillStyle="pink";
-        ctx.fillRect(princess.x, princess.y, princess.w, princess.h);
-    }
+    ctx.drawImage(imgPlayer,player.x,player.y,player.w,player.h);
 
     ctx.restore();
 
@@ -161,9 +157,9 @@ function draw(){
     ctx.fillText("Boss HP: "+boss.hp, 20, 30);
 }
 
-function gameLoop(){
+function loop(){
     update();
     draw();
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(loop);
 }
-gameLoop();
+loop();
